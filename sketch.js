@@ -10,8 +10,7 @@ function setup() {
   gui.add(p, 'radiusY', 0, 500).name("Radius - Y");
   gui.add(p, 'angle', 0, 720).name("Rotation");
   gui.add(p, 'stepCount', 1, 50).step(1).name("# of Angles");
-
-
+  gui.add(p, 'xoff', 1, 10);
 }
 
 function windowResized() {
@@ -21,14 +20,10 @@ function windowResized() {
 function draw() {
   background(80, 100, 250);
   noStroke();
+  
 
   fill(255);
-  for (let repeatX = windowWidth / 2 - p.radiusX; repeatX < windowWidth / 2 + p.radiusX; repeatX += 10) {
-    for (let repeatY = windowHeight / 2 - p.radiusY; repeatY < windowHeight / 2 + p.radiusY; repeatY += 10) {
-      rect(repeatX, repeatY, 5, 10);
-    }
-  }
-
+  drawPattern(p.xoff);
 
   // Draws rectangular background
   fill(0);
@@ -47,8 +42,18 @@ function draw() {
     p.angle += TWO_PI / p.stepCount;
   }
   endContour();
-
   endShape();
+  loop();
+}
+
+function drawPattern(z) {
+  for (let repeatX = windowWidth / 2 - p.radiusX; repeatX < windowWidth / 2 + p.radiusX; repeatX += 10) {
+    for (let repeatY = windowHeight / 2 - p.radiusY; repeatY < windowHeight / 2 + p.radiusY; repeatY += 10) {
+      n = noise(z) * 5;
+      ellipse(repeatX, repeatY, n);
+      z = z + .01;
+    }
+  } noLoop();
 }
 
 function Planet() {
@@ -57,4 +62,5 @@ function Planet() {
   this.angle = 0;
   this.stepCount = 5;
   this.angle = 0;
+  this.xoff = 10;
 }
