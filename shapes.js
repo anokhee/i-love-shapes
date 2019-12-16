@@ -18,15 +18,15 @@ function windowResized() {
 }
 
 function draw() {
-  background(80, 100, 250);
   noStroke();
-  
+  background(23, 18, 166);
 
-  fill(255);
+
+  fill(191, 6, 55);
   drawPattern(p.xoff);
 
   // Draws rectangular background
-  fill(0);
+  fill(228, 205, 175);
   beginShape();
   vertex(0, 0);
   vertex(windowWidth, 0);
@@ -49,11 +49,12 @@ function draw() {
 function drawPattern(z) {
   for (let repeatX = windowWidth / 2 - p.radiusX; repeatX < windowWidth / 2 + p.radiusX; repeatX += 10) {
     for (let repeatY = windowHeight / 2 - p.radiusY; repeatY < windowHeight / 2 + p.radiusY; repeatY += 10) {
-      n = noise(z) * 5;
+      n = noise(z) * 10;
       ellipse(repeatX, repeatY, n);
-      z = z + .01;
+      z = z + 1;
+
     }
-  } noLoop();
+  }
 }
 
 function Planet() {
