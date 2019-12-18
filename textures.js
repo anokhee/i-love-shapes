@@ -23,11 +23,13 @@
 
 let p;
 let oioi;
+let palette;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   p = new Shape(150, 150, 0, 0, 3);
-  oioi = new Pattern(10, 12, 40, 40, 0, 0, 0);
+  oioi = new Pattern(10, 12, 12, 40, 40, 0, 0, 0);
+  palette = new Palette();
   createGUI();
 }
 
@@ -36,14 +38,20 @@ function windowResized() {
 }
 
 function draw() {
-  strokeWeight(5);
-  background(255);
+  strokeWeight(palette.strokeWeight);
+  background(palette.shapeFill);
   for (let repeatX = windowWidth / 2 - p.radiusX * 2; repeatX < windowWidth / 2 + p.radiusX * 2; repeatX += oioi.spacingX) {
     for (let repeatY = windowHeight / 2 - p.radiusY * 2; repeatY < windowHeight / 2 + p.radiusY * 2; repeatY += oioi.spacingY) {
-      drawShape(oioi, repeatX + random(oioi.xjitter), repeatY + random(oioi.yjitter));
+      drawPattern(oioi, repeatX + random(oioi.xjitter), repeatY + random(oioi.yjitter));
     }
   }
+  drawShape();
+}
+
+function drawShape() {
+  noStroke();
   beginShape();
+  fill(palette.backgroundFill);
   vertex(0, 0);
   vertex(windowWidth, 0);
   vertex(windowWidth, windowHeight);
@@ -59,12 +67,16 @@ function draw() {
   endShape();
 }
 
-function drawShape(shape, xPos, yPos) {
+function drawPattern(shape, xPos, yPos) {
   beginShape();
+  noFill();
+  strokeWeight(10);
+  stroke(random(100, 255), random(100, 255), 0);
   for (var i = 0; i <= oioi.numAngles; i++) {
-    let radius = oioi.radius + random(oioi.linejitter);
-    var x = cos(radians(i * (360) / oioi.numAngles)) * radius;
-    var y = sin(radians(i * (360) / oioi.numAngles)) * radius;
+    let radiusX = oioi.radiusX + random(oioi.linejitter);
+    let radiusY = oioi.radiusY + random(oioi.linejitter);
+    var x = cos(radians(i * (360) / oioi.numAngles)) * radiusX;
+    var y = sin(radians(i * (360) / oioi.numAngles)) * radiusY;
     vertex(xPos - x, yPos - y);
   }
   endShape();
@@ -72,9 +84,10 @@ function drawShape(shape, xPos, yPos) {
 
 }
 
-function Pattern(a, r, sx, sy, xj, yj, l) {
+function Pattern(a, rx, ry, sx, sy, xj, yj, l) {
   this.numAngles = a;
-  this.radius = r;
+  this.radiusX = rx;
+  this.radiusY = ry;
   this.spacingX = sx;
   this.spacingY = sy;
   this.xjitter = xj;
@@ -90,6 +103,13 @@ function Shape(rx, ry, l, a, nA) {
   this.numAngles = nA;
 }
 
+function Palette() {
+  this.shapeFill = [140, 4, 4];
+  this.backgroundFill = [200, 200, 200];
+  this.strokeWeight = 3;
+  this.patternFill = [];
+}
+
 function createGUI() {
   let gui = new dat.GUI();
   let shapeMenu = gui.addFolder('Outline Shape');
@@ -99,7 +119,8 @@ function createGUI() {
   shapeMenu.add(p, 'linejitter', 0, 200).step(1).name("Line Jitteriness").onChange(redraw);
 
   let patternMenu = gui.addFolder('Pattern Controls');
-  patternMenu.add(oioi, 'radius', 0, 50).step(1).name('Radius').onChange(redraw);
+  patternMenu.add(oioi, 'radiusX', 0, 100).step(1).name('Radius').onChange(redraw);
+  patternMenu.add(oioi, 'radiusY', 0, 100).step(1).name('Radius').onChange(redraw);
   patternMenu.add(oioi, 'spacingX', 0, 50).step(1).name('Spacing - X').onChange(redraw);
   patternMenu.add(oioi, 'spacingY', 0, 50).step(1).name('Spacing - Y').onChange(redraw);
   patternMenu.add(oioi, 'numAngles', 0, 50).step(1).name('# of Angles').onChange(redraw);
